@@ -2,13 +2,19 @@ package com.modeler.modeler_spring.DTO;
 
 import java.util.List;
 
+
+
 public class RutaDTO {
-    private Integer id;
+    private String id;
     private String nombre;
     private String fecha;
     private Integer usuarioCreador;
     private List<UserDTO> usuariosParticipantes;
     public RutaDTO() {
+    }
+    public RutaDTO(String id, String nombre) {
+        this.id = id;
+        this.nombre = nombre;
     }
     public RutaDTO(String nombre, Integer usuarioCreador) {
         this.nombre = nombre;
@@ -20,7 +26,7 @@ public class RutaDTO {
         this.usuarioCreador = usuarioCreador;
         this.usuariosParticipantes = usuariosParticipantes;
     }
-    public RutaDTO(Integer id, String nombre, String fecha, Integer usuarioCreador,
+    public RutaDTO(String id, String nombre, String fecha, Integer usuarioCreador,
             List<UserDTO> usuariosParticipantes) {
         this.id = id;
         this.nombre = nombre;
@@ -28,10 +34,10 @@ public class RutaDTO {
         this.usuarioCreador = usuarioCreador;
         this.usuariosParticipantes = usuariosParticipantes;
     }
-    public Integer getId() {
+    public String getId() {
         return id;
     }
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
     public String getNombre() {

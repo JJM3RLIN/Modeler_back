@@ -5,8 +5,6 @@ import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
@@ -20,7 +18,7 @@ public class Ruta {
     private String id; //Lo vamos a crear de manera automatica
     private String nombre;
     private Date fecha;
-    @ManyToOne(targetEntity = User.class, optional = false, cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "id_usuario")
     private User usuarioCreador;
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})

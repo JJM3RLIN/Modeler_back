@@ -3,6 +3,7 @@ package com.modeler.modeler_spring.controllers;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.function.EntityResponse;
 
+import com.modeler.modeler_spring.DTO.AddUserDTO;
 import com.modeler.modeler_spring.DTO.IdDTO;
 import com.modeler.modeler_spring.DTO.RutaDTO;
 import com.modeler.modeler_spring.services.RutaService;
@@ -27,11 +28,21 @@ public class RutasController {
     public ResponseEntity<?> create (@RequestBody RutaDTO rutaDTO) {
         return ResponseEntity.ok().body(rutaService.create(rutaDTO));
     }
-    @PostMapping("/pertenece")
-    public ResponseEntity<?> update (@RequestBody IdDTO idDTO) {
-        rutaService.findByUsuariosParticipantes(Integer.parseInt(idDTO.getId()));
-        return null;
-        //return ResponseEntity.ok().body(rutaService.update());
+    @PostMapping("/actualizar")
+    public ResponseEntity<?> update (@RequestBody RutaDTO rutaDTO) {
+        return ResponseEntity.ok().body(rutaService.update(rutaDTO));
+    }
+    @PostMapping("/eliminar")
+    public ResponseEntity<?> delete (@RequestBody IdDTO idDTO) {
+        return ResponseEntity.ok().body(rutaService.delete(idDTO.getId()));
+    }
+    @PostMapping("user/agregar")
+    public ResponseEntity<?> addUser (@RequestBody AddUserDTO addUserDTO) {
+        return ResponseEntity.ok().body(rutaService.addUsuarioParticipante(addUserDTO.getIdRuta(), addUserDTO.getEmailUsuario()));
+    }
+    @PostMapping("user/eliminar")
+    public ResponseEntity<?> removeUser (@RequestBody AddUserDTO addUserDTO) {
+        return ResponseEntity.ok().body(rutaService.removeUsuarioParticipante(addUserDTO.getIdRuta(), addUserDTO.getEmailUsuario()));
     }
     
 }

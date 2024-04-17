@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
-
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,15 +19,12 @@ import com.modeler.modeler_spring.repositories.RutaRepository;
 import com.modeler.modeler_spring.repositories.UserRepository;
 import com.modeler.modeler_spring.services.RutaService;
 @Service
-public class RutaServiceImpl implements RutaService{
+public class RutaServiceImpl implements RutaService {
     @Autowired
     UserRepository userRepository;
     @Autowired
     RutaRepository rutaRepository;
-    @Override
-    public Optional<Ruta> findByNombre(String nombre) {
-        throw new UnsupportedOperationException("Unimplemented method 'findByNombre'");
-    }
+
 
     @Override
     public Map<String, String> create(RutaDTO rutaDTO) {
@@ -42,6 +39,10 @@ public class RutaServiceImpl implements RutaService{
             usuariosParticipantes.add(usuarioCreador.get());
             Ruta ruta = new Ruta(idRuta, rutaDTO.getNombre(), new Date(), usuarioCreador.get(), usuariosParticipantes);
              rutaRepository.save(ruta);
+             //agregar la ruta al usuario creador
+            usuarioCreador.get().getRutasCreadas().add(ruta);
+            userRepository.save(usuarioCreador.get());
+
             response.put("id", idRuta);
             response.put("nombre", rutaDTO.getNombre());
             response.put("usuarioCreador", usuarioCreador.get().getNombre());
@@ -55,18 +56,52 @@ public class RutaServiceImpl implements RutaService{
     }
 
     @Override
-    public Ruta update(RutaDTO ruta) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+    public Map<String, String> update(RutaDTO rutaDTO) {
+       Optional<Ruta> ruta = rutaRepository.findById(rutaDTO.getId());
+         if(ruta.isPresent()){
+              ruta.get().setNombre(rutaDTO.getNombre());
+              rutaRepository.save(ruta.get());
+              return Response.response("Se actualizo la ruta de manera correcta", "mensaje");
+            }
+        return Response.response(" Ocurrio un error al actualziar la ruta", "error");
     }
 
     @Override
-    public void delete(Integer id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+    public Map<String, String> delete(String id) {
+        rutaRepository.deleteById(id);
+        return Response.response("Se elimino la ruta de manera correcta", "mensaje");
     }
-    public List<Ruta> findByUsuariosParticipantes(Integer idUsuario) {
-        return rutaRepository.findByUsuariosParticipantes(idUsuario);
+
+    public Map<String, String> addUsuarioParticipante(String idRuta, String emailUsuario) {
+       
+        Optional<Ruta> ruta = rutaRepository.findById(idRuta);
+        //Verificar si el usuario existe en esa ruta y regresar mensaje si ya esta
+        if(ruta.isPresent() && ruta.get().getUsuariosParticipantes().stream().anyMatch(usuario -> usuario.getEmail().equals(emailUsuario))){
+            return Response.response("El usuario ya esta en la ruta", "error");
+        }
+        Optional<User> usuario = userRepository.findByEmail(emailUsuario);
+        System.out.println("correo:"+usuario.get().getEmail());
+        if(ruta.isPresent() && usuario.isPresent()){
+            ruta.get().getUsuariosParticipantes().add(usuario.get());
+            rutaRepository.save(ruta.get());
+            return Response.response("Usuario agregado de manera correcta","mensaje");
+        }
+        else{
+           return Response.response("No se encontro la ruta o el usuario","error");
+        }
+
     }
+
+    
+    public Map<String, String> removeUsuarioParticipante(String idRuta, String emailUsuario) {
+        Optional<Ruta> ruta = rutaRepository.findById(idRuta);
+        //Verificar si el usuario existe en esa ruta y regresar mensaje si ya esta
+        List<User> usersFiltrados = ruta.get().getUsuariosParticipantes().stream().filter(usuario -> !usuario.getEmail().equals(emailUsuario)) .collect(Collectors.toList());
+        ruta.get().setUsuariosParticipantes(usersFiltrados);
+        rutaRepository.save(ruta.get());
+        return Response.response("mensaje", "Usuario eliminado de manera correcta");
+    }
+
+    
     
 }

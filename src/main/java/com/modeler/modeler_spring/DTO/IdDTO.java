@@ -2,6 +2,8 @@ package com.modeler.modeler_spring.DTO;
 
 public class IdDTO {
     private String id;
+    public IdDTO() {
+    }
     public IdDTO(String id) {
         this.id = id;
     }

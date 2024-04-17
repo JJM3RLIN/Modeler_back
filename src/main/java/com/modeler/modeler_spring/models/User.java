@@ -5,6 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,10 +20,12 @@ public class User {
     private Integer id;
     private String nombre;
     private String email;
+    private String token;
+    @Column(columnDefinition = "boolean default false")
+    private boolean verificado;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;   
-    @JoinColumn(name = "id_usuario")
-    @OneToMany(targetEntity = Ruta.class, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "usuarioCreador", cascade = CascadeType.ALL)
     private List<Ruta> rutasCreadas;
 
     public User() {
@@ -33,6 +36,13 @@ public class User {
         this.email = email;
         this.password = password;
         this.rutasCreadas = rutasCreadas;
+    }
+    public User(String nombre, String email, String password, List<Ruta> rutasCreadas, String token) {
+        this.nombre = nombre;
+        this.email = email;
+        this.password = password;
+        this.rutasCreadas = rutasCreadas;
+        this.token = token;
     }
     
     public User(Integer id, String nombre, String email, String password, List<Ruta> rutasCreadas) {
@@ -67,6 +77,23 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+    
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public boolean isVerificado() {
+        return verificado;
+    }
+
+    public void setVerificado(boolean verificado) {
+        this.verificado = verificado;
+    }
+
     public List<Ruta> getRutasCreadas() {
         return rutasCreadas;
     }

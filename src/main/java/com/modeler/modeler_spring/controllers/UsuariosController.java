@@ -23,16 +23,11 @@ public class UsuariosController {
     UserService userService;
     @PostMapping("/crear")
     public ResponseEntity<?> create(@RequestBody UserDTO userDTO){
-        Map<String, String> response = new HashMap<>();
-        response.put("mensaje", userService.create(userDTO));
-       return ResponseEntity.ok().body(response);        
+       return ResponseEntity.ok().body(userService.create(userDTO));        
     }
     @PostMapping("/eliminar")
     public ResponseEntity<?> delete(@RequestBody IdDTO idDTO){      
-        userService.delete(Integer.parseInt(idDTO.getId()));   
-        Map<String, String> response = new HashMap<>();
-        response.put("mensaje", "Usuario eliminado");
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok().body(userService.delete(Integer.parseInt(idDTO.getId())));
     }
     @PostMapping("/actualizar")
     public ResponseEntity<?> update(@RequestBody UserDTO userDTO){
@@ -41,5 +36,9 @@ public class UsuariosController {
     @PostMapping("/buscar")
     public ResponseEntity<?> findByEmail(@RequestBody EmailDTO emailDTO){
         return ResponseEntity.ok().body(userService.findByEmail(emailDTO.getEmail()));
+    }
+    @PostMapping("/rutas")
+    public ResponseEntity<?> rutasUsuario(@RequestBody IdDTO idDTO){
+        return ResponseEntity.ok().body(userService.rutasParticipante(Integer.parseInt(idDTO.getId())));
     }
 }
