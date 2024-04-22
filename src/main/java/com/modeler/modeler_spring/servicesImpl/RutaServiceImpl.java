@@ -46,7 +46,7 @@ public class RutaServiceImpl implements RutaService {
             response.put("id", idRuta);
             response.put("nombre", rutaDTO.getNombre());
             response.put("usuarioCreador", usuarioCreador.get().getNombre());
-            response.put("mensaje", "Proyecto creada de manera correcta");
+            response.put("mensaje", "Proyecto creado de manera correcta");
         }
         else{
             response.put("error", "No se encontro el usuario creador");
@@ -61,15 +61,15 @@ public class RutaServiceImpl implements RutaService {
          if(ruta.isPresent()){
               ruta.get().setNombre(rutaDTO.getNombre());
               rutaRepository.save(ruta.get());
-              return Response.response("Se actualizo la ruta de manera correcta", "mensaje");
+              return Response.response("Se actualizo el proyecto de manera correcta", "mensaje");
             }
-        return Response.response(" Ocurrio un error al actualziar la ruta", "error");
+        return Response.response(" Ocurrio un error al actualizar el proyecto", "error");
     }
 
     @Override
     public Map<String, String> delete(String id) {
         rutaRepository.deleteById(id);
-        return Response.response("Se elimino la ruta de manera correcta", "mensaje");
+        return Response.response("Se elimino el proyecto de manera correcta", "mensaje");
     }
 
     public Map<String, String> addUsuarioParticipante(String idRuta, String emailUsuario) {

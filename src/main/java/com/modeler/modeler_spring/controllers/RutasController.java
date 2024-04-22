@@ -1,24 +1,22 @@
 package com.modeler.modeler_spring.controllers;
 
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.function.EntityResponse;
+
 
 import com.modeler.modeler_spring.DTO.AddUserDTO;
 import com.modeler.modeler_spring.DTO.IdDTO;
 import com.modeler.modeler_spring.DTO.RutaDTO;
 import com.modeler.modeler_spring.services.RutaService;
-
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
 
-
+@CrossOrigin(origins = "http://localhost:5173/", originPatterns = "*")
 @RestController
 @RequestMapping("modeler/api/rutas")
 public class RutasController {
@@ -36,7 +34,7 @@ public class RutasController {
     public ResponseEntity<?> delete (@RequestBody IdDTO idDTO) {
         return ResponseEntity.ok().body(rutaService.delete(idDTO.getId()));
     }
-    @PostMapping("user/agregar")
+    @PostMapping("user/agregar-colaborador")
     public ResponseEntity<?> addUser (@RequestBody AddUserDTO addUserDTO) {
         return ResponseEntity.ok().body(rutaService.addUsuarioParticipante(addUserDTO.getIdRuta(), addUserDTO.getEmailUsuario()));
     }

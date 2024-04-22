@@ -33,6 +33,7 @@ public class JpaUserDetailService implements UserDetailsService {
         User user = userOptional.orElseThrow();
         session.setAttribute("nombre", user.getNombre());
         session.setAttribute("id", user.getId());
+        session.setAttribute("verificado", user.isVerificado());
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), true, true, true, true, Collections.emptyList());
     }
     

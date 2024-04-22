@@ -13,5 +13,6 @@ public interface UserService {
     public Map<String, String> create(UserDTO userDTO);
     public Map<String, String> update(UserDTO userDTO);
     public Map<String, String> delete(Integer id);
+    public Map<String, String> verificarToken(String token);
     public List<RutasUsuarioDTO>  rutasParticipante(Integer idUsuario);
 }

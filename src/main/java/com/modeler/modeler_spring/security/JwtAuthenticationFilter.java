@@ -75,6 +75,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         HttpSession session = request.getSession();
         body.put("nombre", (String) session.getAttribute("nombre"));
         body.put("id", String.valueOf(session.getAttribute("id")));
+        body.put("verificado", String.valueOf(session.getAttribute("verificado")));
         response.getWriter().write(new ObjectMapper().writeValueAsString(body));
         response.setContentType(JWTEnums.CONTENT_TYPE.getValue());
         response.setStatus(200);

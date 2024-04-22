@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService{
         //Verificar si el email ya existe
         Optional<User> userOptional = userRepository.findByEmail(userDTO.getEmail());
         if(userOptional.isPresent()){
-            return Response.response("El email ya existe","error");
+            return Response.response("El email ya esta en uso","error");
         }
         //Encriptar la contraseña
         String passwordEncoded = passwordEncoder.encode(userDTO.getPassword());
@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService{
         User user = new User(userDTO.getNombre(), userDTO.getEmail(), passwordEncoded,rutasCreadas, token);
         userRepository.save(user);
         //Enviar email de verificación
-        emailService.sendEmailAccount(userDTO.getEmail(), "http://localhost:8080/verify/"+token, userDTO.getNombre());
+        emailService.sendEmailAccount(userDTO.getEmail(), "http://localhost:5173/verified/"+token, userDTO.getNombre());
         return Response.response("Usuario creado, te hemos enviado un email para que verifiques tu cuenta","mensaje");
     }
 
@@ -79,6 +79,18 @@ public class UserServiceImpl implements UserService{
         return Response.response("Usuario eliminado de manera correcta", "mensaje");
     }
 
+    @Override
+    public Map<String, String> verificarToken(String token) {
+        Optional<User> userOptional = userRepository.findByToken(token);
+        if(!userOptional.isPresent()){
+            return Response.response("false", "validacion");
+        }
+        User user = userOptional.get();
+        user.setToken(null);
+        user.setVerificado(true);
+        userRepository.save(user);
+        return Response.response("true", "validacion");
+    }
     @Override
     public List<RutasUsuarioDTO> rutasParticipante(Integer idUsuario) {
         return rutaRepository.findByUsuariosParticipante(idUsuario);
