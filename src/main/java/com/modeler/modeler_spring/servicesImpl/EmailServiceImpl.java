@@ -1,12 +1,7 @@
 package com.modeler.modeler_spring.servicesImpl;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -40,8 +35,8 @@ public class EmailServiceImpl implements EmailService{
         MimeMessageHelper helper = new MimeMessageHelper(message, "utf-8");
         try {
             helper.setTo(emailDestinatario);
-            helper.setSubject("Invitacion a proyecto");
-            helper.setText(genereHeaderHtml("Invitacion a proyecto", nombre)+ addProjectHTMLString(ruta) + generateFooterHmtl(), true);
+            helper.setSubject("Has sido añadido a un proyecto");
+            helper.setText(genereHeaderHtml("Te añadieron a un proyecto", nombre)+ addProjectHTMLString(ruta) + generateFooterHmtl(), true);
             emailSender.send(message);
         } catch (MessagingException e) {
             e.printStackTrace();
@@ -74,6 +69,7 @@ public class EmailServiceImpl implements EmailService{
         +".container {width: 600px;margin: 10px auto;background-color: #fff;padding: 60px;border-radius: 10px;box-shadow: 0 4px 8px rgba(0,0,0,0.1);}"
         +".containerima {margin: 10px auto;display: flex;margin: auto;}"
         +"h1 {text-align: left;font-size: 24px;margin-bottom: 20px;}"
+        + "a {text-decoration: none; color: white; font-weight: bold;}"
         +" p {font-size: 16px;line-height: 1.5;}"
         +" button {display: flex; margin: auto; text-align: center;background-color: #024079; color: white;padding: 15px 30px;border-radius: 8px;margin-top: 30px;margin-bottom: 30px;cursor: pointer;transition: background-color 0.3s ease-in-out;box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);outline: none; font-weight: bold; }"        
         +".button:hover {background-color: #03539f; transition: background-color 0.3s ease-in-out;}"
@@ -102,8 +98,8 @@ public class EmailServiceImpl implements EmailService{
     }
     private String addProjectHTMLString(String ruta){
         return 
-        "<p>Has sido invitado a un proyecto, puedes unirte dando click en el botón para unirte al proyecto. Si no solicitaste unirte al proyecto, puedes borrar este email y seguir diseñando con Modeler.</p>"
-        +"<button class='button'><a href='" + ruta + "'>Unirme al proyecto</a></button>";
+        "<p>Has sido añadido a un proyecto, inicia sesion para empezar a diseñar con Modeler.</p>"
+        +"<button class='button'><a href='" + ruta + "'>Ir a Modeler</a></button>";
     }
     private String accountHTMLString(String ruta){
         return 

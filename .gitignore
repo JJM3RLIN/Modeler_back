@@ -3,7 +3,8 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-!**/src/main/**/templates/email.properties
+/src/main/resources/email.properties
+
 ### STS ###
 .apt_generated
 .classpath

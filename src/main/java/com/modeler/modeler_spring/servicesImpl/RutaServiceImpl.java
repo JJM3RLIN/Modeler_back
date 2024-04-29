@@ -13,10 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.modeler.modeler_spring.DTO.RutaDTO;
+import com.modeler.modeler_spring.DTO.UserDTO;
 import com.modeler.modeler_spring.models.Ruta;
 import com.modeler.modeler_spring.models.User;
 import com.modeler.modeler_spring.repositories.RutaRepository;
 import com.modeler.modeler_spring.repositories.UserRepository;
+import com.modeler.modeler_spring.services.EmailService;
 import com.modeler.modeler_spring.services.RutaService;
 @Service
 public class RutaServiceImpl implements RutaService {
@@ -24,7 +26,8 @@ public class RutaServiceImpl implements RutaService {
     UserRepository userRepository;
     @Autowired
     RutaRepository rutaRepository;
-
+    @Autowired
+    EmailService emailService;
 
     @Override
     public Map<String, String> create(RutaDTO rutaDTO) {
@@ -73,7 +76,7 @@ public class RutaServiceImpl implements RutaService {
     }
 
     public Map<String, String> addUsuarioParticipante(String idRuta, String emailUsuario) {
-       
+       Map<String, String> response = new HashMap<String, String>();    
         Optional<Ruta> ruta = rutaRepository.findById(idRuta);
         //Verificar si el usuario existe en esa ruta y regresar mensaje si ya esta
         if(ruta.isPresent() && ruta.get().getUsuariosParticipantes().stream().anyMatch(usuario -> usuario.getEmail().equals(emailUsuario))){
@@ -84,14 +87,23 @@ public class RutaServiceImpl implements RutaService {
         if(ruta.isPresent() && usuario.isPresent()){
             ruta.get().getUsuariosParticipantes().add(usuario.get());
             rutaRepository.save(ruta.get());
-            return Response.response("Usuario agregado de manera correcta","mensaje");
+           // return Response.response("Usuario agregado de manera correcta","mensaje");
+           response.put("mensaje", "Usuario agregado de manera correcta");
+           response.put("nombre", usuario.get().getNombre());
+           response.put("idUsuario", String.valueOf(usuario.get().getId()));
+           response.put("email", usuario.get().getEmail());
+           emailService.sendEmailAddProject(emailUsuario, "http://localhost:5173/login",usuario.get().getNombre());
+           return response;
         }
         else{
            return Response.response("No se encontro la ruta o el usuario","error");
         }
 
     }
-
+    public List<UserDTO> obtenerUsuarioParticipantesDeProyecto(String idRuta){
+        List<UserDTO> usuariosParticipantes = rutaRepository.findUsuariosEnProyecto(idRuta);
+        return usuariosParticipantes;
+    }
     
     public Map<String, String> removeUsuarioParticipante(String idRuta, String emailUsuario) {
         Optional<Ruta> ruta = rutaRepository.findById(idRuta);

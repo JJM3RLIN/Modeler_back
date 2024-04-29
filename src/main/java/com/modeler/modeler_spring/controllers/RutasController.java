@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.modeler.modeler_spring.DTO.AddUserDTO;
 import com.modeler.modeler_spring.DTO.IdDTO;
 import com.modeler.modeler_spring.DTO.RutaDTO;
+import com.modeler.modeler_spring.services.EmailService;
 import com.modeler.modeler_spring.services.RutaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class RutasController {
     @Autowired
     RutaService rutaService;
+
     @PostMapping("/crear")
     public ResponseEntity<?> create (@RequestBody RutaDTO rutaDTO) {
         return ResponseEntity.ok().body(rutaService.create(rutaDTO));
@@ -34,6 +36,11 @@ public class RutasController {
     public ResponseEntity<?> delete (@RequestBody IdDTO idDTO) {
         return ResponseEntity.ok().body(rutaService.delete(idDTO.getId()));
     }
+    @PostMapping("/usuarios-participan")
+    public ResponseEntity<?> usuariosParticipanEnProyecto(@RequestBody IdDTO idDTO) {
+        return ResponseEntity.ok().body(rutaService.obtenerUsuarioParticipantesDeProyecto(idDTO.getId()));
+    }
+    
     @PostMapping("user/agregar-colaborador")
     public ResponseEntity<?> addUser (@RequestBody AddUserDTO addUserDTO) {
         return ResponseEntity.ok().body(rutaService.addUsuarioParticipante(addUserDTO.getIdRuta(), addUserDTO.getEmailUsuario()));

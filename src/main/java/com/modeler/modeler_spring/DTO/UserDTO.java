@@ -26,7 +26,11 @@ public class UserDTO {
         this.password = password;
         this.rutasCreadas = rutasCreadas;
     }
-    
+    public UserDTO(Integer id, String nombre, String email) {
+        this.id = id;
+        this.nombre = nombre;
+        this.email = email;
+    }
     public UserDTO(Integer id, String nombre, String email, String password) {
         this.id = id;
         this.nombre = nombre;
