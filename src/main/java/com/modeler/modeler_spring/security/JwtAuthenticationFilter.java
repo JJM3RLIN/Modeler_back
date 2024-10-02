@@ -43,7 +43,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 System.out.println("Fallo al autenticar...");
                 e.printStackTrace();
             }
-            //Autenticamos al usuario y generamos su token
+            //Autenticamos al usuario
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDTO.getEmail(), userDTO.getPassword());
             return authenticationManager.authenticate(authenticationToken);
         

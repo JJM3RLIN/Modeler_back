@@ -17,14 +17,18 @@ import jakarta.servlet.http.HttpSession;
 
 @Service
 public class JpaUserDetailService implements UserDetailsService {
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private HttpSession session;
+
     @Transactional(readOnly = true)
     @Override
+    //Buscar que el usuario exista en la base de datos y despues llama al filtro para generar un token  
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        //System.out.println("correo: " + username);
+       
         Optional<User> userOptional = userRepository.findByEmail(username);
         if(!userOptional.isPresent()) {
             throw new UsernameNotFoundException("User not found with email: " + username);

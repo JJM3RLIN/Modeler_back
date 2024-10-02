@@ -44,6 +44,8 @@ public class SpringSecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests((authz) -> authz
                 .requestMatchers(HttpMethod.POST, "/modeler/api/usuarios/crear").permitAll()
+                .requestMatchers(HttpMethod.POST, "/modeler/api/usuarios/recover").permitAll()
+                .requestMatchers(HttpMethod.POST, "/modeler/api/usuarios/reset").permitAll()
                 .requestMatchers("/modeler/api/usuarios/verificar/*").permitAll()
                 .requestMatchers( "/static/**").permitAll()
                 .anyRequest().authenticated())
@@ -51,7 +53,7 @@ public class SpringSecurityConfig {
                 .addFilter(new JwtValidationFilter(authenticationManager()))
                 .csrf(config -> config.disable())
                 //Agregamos nuestro filtro de cors
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                //.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
@@ -67,6 +69,7 @@ public class SpringSecurityConfig {
         source.registerCorsConfiguration("/**", config); 
         return source;
     }
+    
     //Para asignar nuestra configuracion de cors a la aplicacion
     @Bean
     FilterRegistrationBean<CorsFilter> corsFilter() {

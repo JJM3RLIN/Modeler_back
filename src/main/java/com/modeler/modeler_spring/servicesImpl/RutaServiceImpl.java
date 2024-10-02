@@ -18,8 +18,12 @@ import com.modeler.modeler_spring.models.Ruta;
 import com.modeler.modeler_spring.models.User;
 import com.modeler.modeler_spring.repositories.RutaRepository;
 import com.modeler.modeler_spring.repositories.UserRepository;
+import com.modeler.modeler_spring.responses.UsuarioParticipanteResponse;
 import com.modeler.modeler_spring.services.EmailService;
 import com.modeler.modeler_spring.services.RutaService;
+import com.modeler.modeler_spring.configuration.ModelerException;
+import com.modeler.modeler_spring.responses.RutaResponse;
+
 @Service
 public class RutaServiceImpl implements RutaService {
     @Autowired
@@ -30,88 +34,144 @@ public class RutaServiceImpl implements RutaService {
     EmailService emailService;
 
     @Override
-    public Map<String, String> create(RutaDTO rutaDTO) {
-        Map<String, String> response = new HashMap<String, String>();
-        //Encontar al usuario creador
-        Optional<User> usuarioCreador = userRepository.findById(rutaDTO.getUsuarioCreador());
-        if(usuarioCreador.isPresent()){
-            //Generamos el string de id de la ruta
-            String idRuta =  UUID.randomUUID().toString() + new Date().getTime();
-            //Creamos la lista de usuarios participantes
-            List<User> usuariosParticipantes = new ArrayList<User>();
-            usuariosParticipantes.add(usuarioCreador.get());
-            Ruta ruta = new Ruta(idRuta, rutaDTO.getNombre(), new Date(), usuarioCreador.get(), usuariosParticipantes);
-             rutaRepository.save(ruta);
-             //agregar la ruta al usuario creador
-            usuarioCreador.get().getRutasCreadas().add(ruta);
-            userRepository.save(usuarioCreador.get());
+    public RutaResponse create(RutaDTO rutaDTO)throws ModelerException{
 
-            response.put("id", idRuta);
-            response.put("nombre", rutaDTO.getNombre());
-            response.put("usuarioCreador", usuarioCreador.get().getNombre());
-            response.put("mensaje", "Proyecto creado de manera correcta");
+        try{
+
+            Map<String, String> response = new HashMap<String, String>();
+
+            //Encontar al usuario creador
+            Optional<User> usuarioCreador = userRepository.findById(rutaDTO.getUsuarioCreador());
+
+            if(!usuarioCreador.isPresent()){
+                throw new ModelerException("No se encontro el usuario creador");
+            }
+                //Generamos el string de id de la ruta
+                String idRuta =  UUID.randomUUID().toString() + new Date().getTime();
+
+                //Creamos la lista de usuarios participantes
+                List<User> usuariosParticipantes = new ArrayList<User>();
+                usuariosParticipantes.add(usuarioCreador.get());
+                Ruta ruta = new Ruta(idRuta, rutaDTO.getNombre(), new Date(), usuarioCreador.get(), usuariosParticipantes);
+                 rutaRepository.save(ruta);
+
+                 //agregar la ruta al usuario creador
+                usuarioCreador.get().getRutasCreadas().add(ruta);
+                userRepository.save(usuarioCreador.get());
+    
+                response.put("id", idRuta);
+                response.put("nombre", rutaDTO.getNombre());
+                response.put("usuarioCreador", usuarioCreador.get().getNombre());
+                return new RutaResponse(
+                    idRuta, 
+                    rutaDTO.getNombre(), 
+                    usuarioCreador.get().getNombre());
+            
         }
-        else{
-            response.put("error", "No se encontro el usuario creador");
+        catch(Exception e){
+            throw new ModelerException(e.getMessage());
         }
         
-        return response;
     }
 
     @Override
-    public Map<String, String> update(RutaDTO rutaDTO) {
-       Optional<Ruta> ruta = rutaRepository.findById(rutaDTO.getId());
-         if(ruta.isPresent()){
-              ruta.get().setNombre(rutaDTO.getNombre());
-              rutaRepository.save(ruta.get());
-              return Response.response("Se actualizo el proyecto de manera correcta", "mensaje");
+    public String update(RutaDTO rutaDTO) throws ModelerException {
+        
+        try{
+
+            Optional<Ruta> ruta = rutaRepository.findById(rutaDTO.getId());
+
+            if(!ruta.isPresent()){
+
+                throw new ModelerException("No se encontro la ruta");
             }
-        return Response.response(" Ocurrio un error al actualizar el proyecto", "error");
+            ruta.get().setNombre(rutaDTO.getNombre());
+            rutaRepository.save(ruta.get());
+            return "Se actualizo el proyecto de manera correcta";
+        }
+        catch(Exception e){
+            throw new ModelerException(e.getMessage());
+        }
     }
 
     @Override
-    public Map<String, String> delete(String id) {
-        rutaRepository.deleteById(id);
-        return Response.response("Se elimino el proyecto de manera correcta", "mensaje");
+    public String delete(String id) throws ModelerException{
+        try{
+            if(!rutaRepository.findById(id).isPresent()){
+                throw new ModelerException("La ruta no existe");
+            }
+            rutaRepository.deleteById(id);
+            return "Se elimino el proyecto de manera correcta";
+
+        }catch(Exception e){
+            throw new ModelerException(e.getMessage());
+        }
     }
 
-    public Map<String, String> addUsuarioParticipante(String idRuta, String emailUsuario) {
-       Map<String, String> response = new HashMap<String, String>();    
-        Optional<Ruta> ruta = rutaRepository.findById(idRuta);
-        //Verificar si el usuario existe en esa ruta y regresar mensaje si ya esta
-        if(ruta.isPresent() && ruta.get().getUsuariosParticipantes().stream().anyMatch(usuario -> usuario.getEmail().equals(emailUsuario))){
-            return Response.response("El usuario ya esta en la ruta", "error");
-        }
-        Optional<User> usuario = userRepository.findByEmail(emailUsuario);
-        System.out.println("correo:"+usuario.get().getEmail());
-        if(ruta.isPresent() && usuario.isPresent()){
+    public UsuarioParticipanteResponse addUsuarioParticipante(String idRuta, String emailUsuario) throws ModelerException{
+        try{
+   
+            Optional<Ruta> ruta = rutaRepository.findById(idRuta);
+            Optional<User> usuario = userRepository.findByEmail(emailUsuario);
+
+            if(!usuario.isPresent()){
+                throw new ModelerException("No se encontro el usuario");
+            }
+
+            if(!ruta.isPresent()){
+                throw new ModelerException("No se encontro la ruta");
+            }
+
+            if(ruta.get().getUsuariosParticipantes().stream().anyMatch(user -> user.getEmail().equals(emailUsuario))){
+                throw new ModelerException("El usuario ya esta en la ruta");
+            }
+
             ruta.get().getUsuariosParticipantes().add(usuario.get());
             rutaRepository.save(ruta.get());
-           // return Response.response("Usuario agregado de manera correcta","mensaje");
-           response.put("mensaje", "Usuario agregado de manera correcta");
-           response.put("nombre", usuario.get().getNombre());
-           response.put("idUsuario", String.valueOf(usuario.get().getId()));
-           response.put("email", usuario.get().getEmail());
-           emailService.sendEmailAddProject(emailUsuario, "http://localhost:5173/login",usuario.get().getNombre());
-           return response;
-        }
-        else{
-           return Response.response("No se encontro la ruta o el usuario","error");
-        }
+            emailService.sendEmailAddProject(emailUsuario, "http://localhost:5173/login",usuario.get().getNombre());
 
+            return new UsuarioParticipanteResponse(
+                usuario.get().getNombre(), 
+                usuario.get().getEmail(), 
+                String.valueOf(usuario.get().getId()));
+        }
+        catch(Exception e){
+            throw new ModelerException(e.getMessage());
+        }
     }
-    public List<UserDTO> obtenerUsuarioParticipantesDeProyecto(String idRuta){
-        List<UserDTO> usuariosParticipantes = rutaRepository.findUsuariosEnProyecto(idRuta);
-        return usuariosParticipantes;
+    public List<UserDTO> obtenerUsuarioParticipantesDeProyecto(String idRuta) throws ModelerException{
+        try{
+            rutaRepository.findById(idRuta).orElseThrow(() -> new ModelerException("No se encontro la ruta"));
+            List<UserDTO> usuariosParticipantes = rutaRepository.findUsuariosEnProyecto(idRuta);
+            return usuariosParticipantes;
+        }
+        catch(Exception e){
+            throw new ModelerException(e.getMessage());
+        }
     }
     
-    public Map<String, String> removeUsuarioParticipante(String idRuta, String emailUsuario) {
-        Optional<Ruta> ruta = rutaRepository.findById(idRuta);
-        //Verificar si el usuario existe en esa ruta y regresar mensaje si ya esta
-        List<User> usersFiltrados = ruta.get().getUsuariosParticipantes().stream().filter(usuario -> !usuario.getEmail().equals(emailUsuario)) .collect(Collectors.toList());
-        ruta.get().setUsuariosParticipantes(usersFiltrados);
-        rutaRepository.save(ruta.get());
-        return Response.response("mensaje", "Usuario eliminado de manera correcta");
+    public String removeUsuarioParticipante(String idRuta, String emailUsuario) throws ModelerException{
+        
+        try{
+            Optional<Ruta> ruta = rutaRepository.findById(idRuta);
+            if(!ruta.isPresent()){
+                throw new ModelerException("No se encontro la ruta");
+            }
+
+            userRepository.findByEmail(emailUsuario).orElseThrow(() -> new ModelerException("No se encontro el usuario"));
+
+            //Verificar si el usuario existe en esa ruta y regresar mensaje si ya esta
+            if(!ruta.get().getUsuariosParticipantes().stream().anyMatch(usuario -> usuario.getEmail().equals(emailUsuario))){
+                throw new ModelerException("El usuario no esta en la ruta");
+            }
+            List<User> usersFiltrados = ruta.get().getUsuariosParticipantes().stream().filter(usuario -> !usuario.getEmail().equals(emailUsuario)) .collect(Collectors.toList());
+            ruta.get().setUsuariosParticipantes(usersFiltrados);
+            rutaRepository.save(ruta.get());
+            return "Usuario eliminado de manera correcta";
+        }
+        catch(Exception e){
+            throw new ModelerException(e.getMessage());
+        }
     }
 
     

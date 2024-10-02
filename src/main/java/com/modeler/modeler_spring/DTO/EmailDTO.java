@@ -2,6 +2,9 @@ package com.modeler.modeler_spring.DTO;
 
 public class EmailDTO {
     private String email;
+
+    public EmailDTO() {
+    }
     public EmailDTO(String email) {
         this.email = email;
     }

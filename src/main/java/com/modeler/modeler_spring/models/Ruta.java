@@ -15,12 +15,14 @@ import jakarta.persistence.UniqueConstraint;
 @Entity
 public class Ruta {
     @Id
-    private String id; //Lo vamos a crear de manera automatica
+    private String id; 
     private String nombre;
     private Date fecha;
+
     @ManyToOne
     @JoinColumn(name = "id_usuario")
     private User usuarioCreador;
+
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "ruta_usuario_participantes", 
     joinColumns = @JoinColumn(name = "ruta_id"), 
