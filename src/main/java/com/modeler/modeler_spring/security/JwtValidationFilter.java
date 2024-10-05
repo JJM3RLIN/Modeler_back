@@ -21,7 +21,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 
-
+//Para verificar que el JWT este correcto
 public class JwtValidationFilter extends BasicAuthenticationFilter{
 
     public JwtValidationFilter(AuthenticationManager authenticationManager) {

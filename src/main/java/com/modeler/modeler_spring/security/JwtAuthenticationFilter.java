@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +24,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-
+//Valida que el usuario exista en la base de datos y genera un token
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter{
     
     private AuthenticationManager authenticationManager;
@@ -40,9 +41,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             try {
                 userDTO = new ObjectMapper().readValue(request.getInputStream(), UserDTO.class);
             } catch (IOException e) {
-                System.out.println("Fallo al autenticar...");
                 e.printStackTrace();
             }
+
             //Autenticamos al usuario
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDTO.getEmail(), userDTO.getPassword());
             return authenticationManager.authenticate(authenticationToken);
@@ -82,9 +83,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-            AuthenticationException failed) throws IOException, ServletException {
+            AuthenticationException failed) throws IOException, ServletException, UsernameNotFoundException {
         Map<String, String> body = new HashMap<>();
-        body.put("error", "Error de autenticación");
+        System.out.println(failed instanceof UsernameNotFoundException);
+        HttpSession session = request.getSession();
+        body.put("error", session.getAttribute("error") != null ? (String) session.getAttribute("error") : "Eror de autenticacion");
         response.getWriter().write(new ObjectMapper().writeValueAsString(body));
         response.setStatus(401);
         response.setContentType("application/json");
