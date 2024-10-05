@@ -16,6 +16,7 @@ import com.modeler.modeler_spring.models.User;
 import com.modeler.modeler_spring.repositories.RutaRepository;
 import com.modeler.modeler_spring.repositories.UserRepository;
 import com.modeler.modeler_spring.services.EmailService;
+import com.modeler.modeler_spring.services.Errors;
 import com.modeler.modeler_spring.servicesImpl.RutaServiceImpl;
 import com.modeler.modeler_spring.DTO.RutaDTO;
 import com.modeler.modeler_spring.DTO.UserDTO;
@@ -51,7 +52,7 @@ public void When_CallCreate_And_UserIsNotRegistered_ShouldThrowAnException() thr
         Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.create(rutaDTO));
 
         //Assert
-        assertEquals("No se encontro el usuario creador", exception.getMessage());
+        assertEquals(Errors.CREATOR_USER_NOT_FOUND, exception.getMessage());
 }
 
 
@@ -92,7 +93,7 @@ public void When_CallUpdate_And_RutaDoesNotExist_ShouldThrowAnException() throws
         Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.update(rutaDTO));
 
         //Assert
-        assertEquals("No se encontro la ruta", exception.getMessage());
+        assertEquals(Errors.RUTA_NOT_FOUND, exception.getMessage());
         verify(this.rutaRepository, times(0)).save(any(Ruta.class));
 }
 
@@ -132,7 +133,7 @@ public void When_CallDelete_And_RutaDoesNotExist_ShouldThrowAnException() throws
         Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.delete(rutaId));
 
         //Assert
-        assertEquals("La ruta no existe", exception.getMessage());
+        assertEquals(Errors.RUTA_NOT_FOUND, exception.getMessage());
         verify(this.rutaRepository, times(0)).save(any(Ruta.class));
 }
 
@@ -169,7 +170,7 @@ public void When_CalladdUsuarioParticipante_And_UserDoesNotExist_ShouldThrowAnEx
     Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.addUsuarioParticipante(rutaId, email));
 
     //Assert
-    assertEquals("No se encontro el usuario", exception.getMessage());
+    assertEquals(Errors.USER_NOT_FOUND, exception.getMessage());
 }
 
 @Test
@@ -188,7 +189,7 @@ public void When_CalladdUsuarioParticipante_And_RutaDoesNotExist_ShouldThrowAnEx
     Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.addUsuarioParticipante(rutaId, email));
 
     //Assert
-    assertEquals("No se encontro la ruta", exception.getMessage());
+    assertEquals(Errors.RUTA_NOT_FOUND, exception.getMessage());
 }
 
 @Test
@@ -214,7 +215,7 @@ public void When_CalladdUsuarioParticipante_And_UserIsInRoute_ShouldThrowAnExcep
     Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.addUsuarioParticipante(rutaId, email));
 
     //Assert
-    assertEquals("El usuario ya esta en la ruta", exception.getMessage());
+    assertEquals(Errors.USER_ALREADY_IN_RUTA, exception.getMessage());
 }
 
 @Test
@@ -255,7 +256,7 @@ public void When_CallobtenerUsuarioParticipantesDeProyecto_And_RutaDoesNotExist_
         Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.obtenerUsuariosParticipantesDeProyecto(anyString()));
 
         //Assert
-        assertEquals("No se encontro la ruta", exception.getMessage());
+        assertEquals(Errors.RUTA_NOT_FOUND, exception.getMessage());
 }
 
 @Test
@@ -302,7 +303,7 @@ public void When_CallremoveUsuarioParticipante_And_UserDoesNotExit_ShouldThrowAn
     Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.removeUsuarioParticipante(rutaId, email));
 
     //Assert
-    assertEquals("No se encontro el usuario", exception.getMessage());
+    assertEquals(Errors.USER_NOT_FOUND, exception.getMessage());
 }
 
 @Test
@@ -327,7 +328,7 @@ public void When_CallremoveUsuarioParticipante_And_UserIsNotInRoute_ShouldThrowA
     Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.removeUsuarioParticipante(rutaId, email));
 
     //Assert
-    assertEquals("El usuario no esta en la ruta", exception.getMessage());
+    assertEquals(Errors.USER_NOT_IN_RUTA, exception.getMessage());
 }
 
 @Test

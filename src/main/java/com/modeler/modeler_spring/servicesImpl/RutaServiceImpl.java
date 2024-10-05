@@ -20,6 +20,7 @@ import com.modeler.modeler_spring.repositories.RutaRepository;
 import com.modeler.modeler_spring.repositories.UserRepository;
 import com.modeler.modeler_spring.responses.UsuarioParticipanteResponse;
 import com.modeler.modeler_spring.services.EmailService;
+import com.modeler.modeler_spring.services.Errors;
 import com.modeler.modeler_spring.services.RutaService;
 import com.modeler.modeler_spring.configuration.ModelerException;
 import com.modeler.modeler_spring.responses.RutaResponse;
@@ -44,7 +45,7 @@ public class RutaServiceImpl implements RutaService {
             Optional<User> usuarioCreador = userRepository.findById(rutaDTO.getUsuarioCreador());
 
             if(!usuarioCreador.isPresent()){
-                throw new ModelerException("No se encontro el usuario creador");
+                throw new ModelerException(Errors.CREATOR_USER_NOT_FOUND);
             }
                 //Generamos el string de id de la ruta
                 String idRuta =  UUID.randomUUID().toString() + new Date().getTime();
@@ -83,7 +84,7 @@ public class RutaServiceImpl implements RutaService {
 
             if(!ruta.isPresent()){
 
-                throw new ModelerException("No se encontro la ruta");
+                throw new ModelerException(Errors.RUTA_NOT_FOUND);
             }
             ruta.get().setNombre(rutaDTO.getNombre());
             rutaRepository.save(ruta.get());
@@ -98,7 +99,7 @@ public class RutaServiceImpl implements RutaService {
     public String delete(String id) throws ModelerException{
         try{
             if(!rutaRepository.findById(id).isPresent()){
-                throw new ModelerException("La ruta no existe");
+                throw new ModelerException(Errors.RUTA_NOT_FOUND);
             }
             rutaRepository.deleteById(id);
             return "Se elimino el proyecto de manera correcta";
@@ -116,15 +117,15 @@ public class RutaServiceImpl implements RutaService {
             Optional<User> usuario = userRepository.findByEmail(emailUsuario);
 
             if(!usuario.isPresent()){
-                throw new ModelerException("No se encontro el usuario");
+                throw new ModelerException(Errors.USER_NOT_FOUND);
             }
 
             if(!ruta.isPresent()){
-                throw new ModelerException("No se encontro la ruta");
+                throw new ModelerException(Errors.RUTA_NOT_FOUND);
             }
 
             if(ruta.get().getUsuariosParticipantes().stream().anyMatch(user -> user.getEmail().equals(emailUsuario))){
-                throw new ModelerException("El usuario ya esta en la ruta");
+                throw new ModelerException(Errors.USER_ALREADY_IN_RUTA);
             }
 
             ruta.get().getUsuariosParticipantes().add(usuario.get());
@@ -144,7 +145,7 @@ public class RutaServiceImpl implements RutaService {
     @Override
     public List<UserDTO> obtenerUsuariosParticipantesDeProyecto(String idRuta) throws ModelerException{
         try{
-            rutaRepository.findById(idRuta).orElseThrow(() -> new ModelerException("No se encontro la ruta"));
+            rutaRepository.findById(idRuta).orElseThrow(() -> new ModelerException(Errors.RUTA_NOT_FOUND));
             List<UserDTO> usuariosParticipantes = rutaRepository.findUsuariosEnProyecto(idRuta);
             return usuariosParticipantes;
         }
@@ -159,14 +160,14 @@ public class RutaServiceImpl implements RutaService {
         try{
             Optional<Ruta> ruta = rutaRepository.findById(idRuta);
             if(!ruta.isPresent()){
-                throw new ModelerException("No se encontro la ruta");
+                throw new ModelerException(Errors.RUTA_NOT_FOUND);
             }
 
-            userRepository.findByEmail(emailUsuario).orElseThrow(() -> new ModelerException("No se encontro el usuario"));
+            userRepository.findByEmail(emailUsuario).orElseThrow(() -> new ModelerException(Errors.USER_NOT_FOUND));
 
             //Verificar si el usuario existe en esa ruta y regresar mensaje si ya esta
             if(!ruta.get().getUsuariosParticipantes().stream().anyMatch(usuario -> usuario.getEmail().equals(emailUsuario))){
-                throw new ModelerException("El usuario no esta en la ruta");
+                throw new ModelerException(Errors.USER_NOT_IN_RUTA);
             }
             List<User> usersFiltrados = ruta.get().getUsuariosParticipantes().stream().filter(usuario -> !usuario.getEmail().equals(emailUsuario)) .collect(Collectors.toList());
             ruta.get().setUsuariosParticipantes(usersFiltrados);

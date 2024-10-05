@@ -13,6 +13,7 @@ import jakarta.mail.internet.MimeMessage;
 
 import com.modeler.modeler_spring.servicesImpl.EmailServiceImpl;
 import com.modeler.modeler_spring.configuration.ModelerException;
+import com.modeler.modeler_spring.services.Errors;
 
 @SpringBootTest
 public class EmailServiceImplTest {
@@ -22,7 +23,7 @@ public class EmailServiceImplTest {
     @InjectMocks
      private EmailServiceImpl systemUnderTest;
 
-     private String messageError = "Ocurrio un error el enviar el email";
+     private String messageError = Errors.EMAIL_NOT_SENT;
 
     @Test
     public void When_CallSendEmailRecovery_And_CouldNotSendEmail_ShouldThrowAnException() throws ModelerException 

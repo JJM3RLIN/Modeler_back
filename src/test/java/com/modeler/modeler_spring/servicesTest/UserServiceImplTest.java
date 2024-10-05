@@ -18,6 +18,7 @@ import com.modeler.modeler_spring.models.User;
 import com.modeler.modeler_spring.repositories.RutaRepository;
 import com.modeler.modeler_spring.repositories.UserRepository;
 import com.modeler.modeler_spring.services.EmailService;
+import com.modeler.modeler_spring.services.Errors;
 import com.modeler.modeler_spring.servicesImpl.UserServiceImpl;
 import com.modeler.modeler_spring.DTO.RutasUsuarioDTO;
 import com.modeler.modeler_spring.DTO.UserDTO;
@@ -60,7 +61,7 @@ public void When_CallCreate_And_UserIsRegisteredWithTheSameEmail_ShouldThrowAnEx
         Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.create(userDTO));
 
         //Assert
-        assertEquals("El email ya esta en uso", exception.getMessage());
+        assertEquals(Errors.EMAIL_ALREADY_IN_USE, exception.getMessage());
 }
 
 @Test
@@ -78,13 +79,13 @@ public void When_CallCreate_And_CouldNotSendEmail_ShouldThrowAnException() throw
         UserDTO userDTO = new UserDTO(name, email, password);
         when(this.userRepository.findByEmail(email)).thenReturn(Optional.empty());
         when(this.userRepository.save(any(User.class))).thenReturn(userMock);
-        doThrow(new ModelerException("Ocurrio un error el enviar el email")).when(this.emailService).sendEmailAccount(anyString(), anyString(), anyString());
+        doThrow(new ModelerException(Errors.EMAIL_NOT_SENT)).when(this.emailService).sendEmailAccount(anyString(), anyString(), anyString());
 
         //Act
         Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.create(userDTO));
 
         //Assert
-        assertEquals("Ocurrio un error el enviar el email", exception.getMessage());
+        assertEquals(Errors.EMAIL_NOT_SENT, exception.getMessage());
     
 }
 
@@ -132,7 +133,7 @@ public void When_CallUpdate_And_UserDoesNotExist_ShouldThrowAnException() throws
         Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.update(userDTO));
 
         //Assert
-        assertEquals("El usuario no existe", exception.getMessage());
+        assertEquals(Errors.USER_NOT_FOUND, exception.getMessage());
         verify(this.userRepository, times(0)).save(userMock);
 }
 
@@ -178,7 +179,7 @@ public void When_CallDelete_And_UserDoesNotExist_ShouldThrowAnException() throws
         Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.delete(userDTO.getId()));
 
         //Assert
-        assertEquals("El usuario no existe", exception.getMessage());
+        assertEquals(Errors.USER_NOT_FOUND, exception.getMessage());
         verify(this.userRepository, times(0)).deleteById(userDTO.getId());
 }
 
@@ -224,7 +225,7 @@ public void When_CallVerifyToken_And_TokenDoesNotExist_ShouldThrowAnException() 
         Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.verifyToken(token));
 
         //Assert
-        assertEquals("El token no es valido", exception.getMessage());
+        assertEquals(Errors.INVALID_TOKEN, exception.getMessage());
         verify(userRepository, times(0)).save(userMock);
 }
 
@@ -264,7 +265,7 @@ public void When_CallRutasParticipante_And_UserDoesNotExist_ShouldThrowAnExcepti
         Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.rutasParticipante(id));
 
         //Assert
-        assertEquals("El usuario no existe", exception.getMessage());
+        assertEquals(Errors.USER_NOT_FOUND, exception.getMessage());
         verify(this.rutaRepository, times(0)).findByUsuariosParticipante(id);
 }
 
@@ -304,7 +305,7 @@ public void When_CallSendEmailRecovery_And_UserDosentExist_ShouldThrowAnExceptio
         Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.sendEmailRecovery(email));
 
         //Assert
-        assertEquals("Ocurrio un error el enviar el email", exception.getMessage());
+        assertEquals(Errors.EMAIL_NOT_SENT, exception.getMessage());
     
 }
 

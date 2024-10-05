@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.modeler.modeler_spring.configuration.ModelerException;
 import com.modeler.modeler_spring.services.EmailService;
+import com.modeler.modeler_spring.services.Errors;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -33,7 +34,7 @@ public class EmailServiceImpl implements EmailService{
             emailSender.send(message);
 
         } catch (Exception e) {
-            throw new ModelerException("Ocurrio un error el enviar el email");
+            throw new ModelerException(Errors.EMAIL_NOT_SENT);
         }
     }
 
@@ -50,7 +51,7 @@ public class EmailServiceImpl implements EmailService{
             emailSender.send(message);
 
         } catch (Exception e) {
-            throw new ModelerException("Ocurrio un error el enviar el email");
+            throw new ModelerException(Errors.EMAIL_NOT_SENT);
         }
     }
 
@@ -67,7 +68,7 @@ public class EmailServiceImpl implements EmailService{
             emailSender.send(message);                  
             
         } catch (Exception e) {
-            throw new ModelerException("Ocurrio un error el enviar el email");                 
+            throw new ModelerException(Errors.EMAIL_NOT_SENT);                 
         }
     }
 
@@ -79,7 +80,7 @@ public class EmailServiceImpl implements EmailService{
             helper.setText(text, true);
             return message;
         } catch (MessagingException e) {
-            throw new ModelerException("Ocurrio un error el enviar el email");
+            throw new ModelerException(Errors.EMAIL_NOT_SENT);
         }    
     }
     

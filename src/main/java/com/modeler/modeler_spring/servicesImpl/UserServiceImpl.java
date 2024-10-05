@@ -16,6 +16,7 @@ import com.modeler.modeler_spring.models.User;
 import com.modeler.modeler_spring.repositories.RutaRepository;
 import com.modeler.modeler_spring.repositories.UserRepository;
 import com.modeler.modeler_spring.services.EmailService;
+import com.modeler.modeler_spring.services.Errors;
 import com.modeler.modeler_spring.services.UserService;
 import com.modeler.modeler_spring.configuration.ModelerException;
 import jakarta.transaction.Transactional;
@@ -36,7 +37,7 @@ public class UserServiceImpl implements UserService {
 
         Optional<User> user = userRepository.findByEmail(email);
         if(!user.isPresent()) {
-            throw new ModelerException("El email no esta registrado");
+            throw new ModelerException(Errors.USER_NOT_FOUND);
         }
         return user;
     }
@@ -50,7 +51,7 @@ public class UserServiceImpl implements UserService {
             Optional<User> userOptional = userRepository.findByEmail(userDTO.getEmail());
 
             if (userOptional.isPresent()) {
-                throw new ModelerException("El email ya esta en uso");
+                throw new ModelerException(Errors.EMAIL_ALREADY_IN_USE);
             }
 
             // Encriptar la contraseña
@@ -85,7 +86,7 @@ public class UserServiceImpl implements UserService {
             // Verificar que el usuario exista
             Optional<User> userOptional = userRepository.findById(userDTO.getId());
             if (!userOptional.isPresent()) {
-                throw new ModelerException("El usuario no existe");
+                throw new ModelerException(Errors.USER_NOT_FOUND);
             }
 
             // Encriptar la contraseña
@@ -113,7 +114,7 @@ public class UserServiceImpl implements UserService {
             Optional<User> userOptional = userRepository.findById(id);
 
             if(!userOptional.isPresent()) {
-                throw new ModelerException("El usuario no existe");
+                throw new ModelerException(Errors.USER_NOT_FOUND);
             }
 
         userRepository.deleteById(id);
@@ -130,7 +131,7 @@ public class UserServiceImpl implements UserService {
             Optional<User> userOptional = userRepository.findByToken(token);
 
             if (!userOptional.isPresent()) {
-                throw new ModelerException("El token no es valido");
+                throw new ModelerException(Errors.INVALID_TOKEN);
             }
 
             User user = userOptional.get();
@@ -150,7 +151,7 @@ public class UserServiceImpl implements UserService {
             Optional<User> userOptional = userRepository.findById(idUsuario);
 
             if(!userOptional.isPresent()) {
-                throw new ModelerException("El usuario no existe");
+                throw new ModelerException(Errors.USER_NOT_FOUND);
             }
             return rutaRepository.findByUsuariosParticipante(idUsuario);
         }
@@ -165,12 +166,12 @@ public class UserServiceImpl implements UserService {
         try {
             Optional<User> userOptional = userRepository.findByEmail(emailDestinatario);
             if(!userOptional.isPresent()) {
-                throw new ModelerException("El email no esta registrado");
+                throw new ModelerException(Errors.EMAIL_NOT_REGISTERED);
             }
             emailService.sendEmailRecovery(emailDestinatario, "http://localhost:5173/reset", userOptional.get().getNombre(), Integer.toString(userOptional.get().getId()));
 
         } catch (Exception e) {
-            throw new ModelerException("Ocurrio un error el enviar el email");
+            throw new ModelerException(Errors.EMAIL_NOT_SENT);
         }
     }
 
@@ -179,7 +180,7 @@ public class UserServiceImpl implements UserService {
         try {
             Optional<User> userOptional = userRepository.findById(userDTO.getId());
             if(!userOptional.isPresent()) {
-                throw new ModelerException("El usuario no existe");
+                throw new ModelerException(Errors.USER_NOT_FOUND);
             }
             User user = userOptional.get();
             String passwordEncoded = passwordEncoder.encode(userDTO.getPassword());
