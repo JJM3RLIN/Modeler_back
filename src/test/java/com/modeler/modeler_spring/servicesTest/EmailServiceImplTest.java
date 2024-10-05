@@ -31,14 +31,15 @@ public class EmailServiceImplTest {
             String emailDestinatario = "emailDestinatario@email.com";
             String ruta = "ruta";
             String nombre = "nombre";
+            String id = "12";
             MimeMessage mimeMessage = mock(MimeMessage.class);
             
             //SetUp
-            when(emailSender.createMimeMessage()).thenReturn(mimeMessage);
-            doThrow(new RuntimeException(messageError)).when(emailSender).send(any(MimeMessage.class));
+            when(this.emailSender.createMimeMessage()).thenReturn(mimeMessage);
+            doThrow(new RuntimeException(messageError)).when(this.emailSender).send(any(MimeMessage.class));
 
             //Act
-            Exception exception = assertThrows(ModelerException.class, ()-> systemUnderTest.sendEmailRecovery(emailDestinatario, ruta, nombre));
+            Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.sendEmailRecovery(emailDestinatario, ruta, nombre, id));
 
             //Assert
             assertEquals(messageError, exception.getMessage());
@@ -52,15 +53,16 @@ public class EmailServiceImplTest {
             String emailDestinatario = "emailDestinatario@email.com";
             String ruta = "ruta";
             String nombre = "nombre";
+            String id = "12";
             MimeMessage mimeMessage = mock(MimeMessage.class);
             
             //SetUp
-            when(emailSender.createMimeMessage()).thenReturn(mimeMessage);
+            when(this.emailSender.createMimeMessage()).thenReturn(mimeMessage);
             //Act
-            systemUnderTest.sendEmailRecovery(emailDestinatario, ruta, nombre);
+            this.systemUnderTest.sendEmailRecovery(emailDestinatario, ruta, nombre, id);
 
             //Assert
-            verify(emailSender, times(1)).send(any(MimeMessage.class));
+            verify(this.emailSender, times(1)).send(any(MimeMessage.class));
         
     }
 
@@ -74,11 +76,11 @@ public class EmailServiceImplTest {
             MimeMessage mimeMessage = mock(MimeMessage.class);
             
             //SetUp
-            when(emailSender.createMimeMessage()).thenReturn(mimeMessage);
-            doThrow(new RuntimeException(messageError)).when(emailSender).send(any(MimeMessage.class));
+            when(this.emailSender.createMimeMessage()).thenReturn(mimeMessage);
+            doThrow(new RuntimeException(messageError)).when(this.emailSender).send(any(MimeMessage.class));
 
             //Act
-            Exception exception = assertThrows(ModelerException.class, ()-> systemUnderTest.sendEmailAddProject(emailDestinatario, ruta, nombre));
+            Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.sendEmailAddProject(emailDestinatario, ruta, nombre));
 
             //Assert
             assertEquals(messageError, exception.getMessage());
@@ -95,12 +97,12 @@ public class EmailServiceImplTest {
             MimeMessage mimeMessage = mock(MimeMessage.class);
             
             //SetUp
-            when(emailSender.createMimeMessage()).thenReturn(mimeMessage);
+            when(this.emailSender.createMimeMessage()).thenReturn(mimeMessage);
             //Act
-            systemUnderTest.sendEmailAddProject(emailDestinatario, ruta, nombre);
+            this.systemUnderTest.sendEmailAddProject(emailDestinatario, ruta, nombre);
 
             //Assert
-            verify(emailSender, times(1)).send(any(MimeMessage.class));
+            verify(this.emailSender, times(1)).send(any(MimeMessage.class));
         
     }
 
@@ -114,11 +116,11 @@ public class EmailServiceImplTest {
             MimeMessage mimeMessage = mock(MimeMessage.class);
             
             //SetUp
-            when(emailSender.createMimeMessage()).thenReturn(mimeMessage);
+            when(this.emailSender.createMimeMessage()).thenReturn(mimeMessage);
             doThrow(new RuntimeException(messageError)).when(emailSender).send(any(MimeMessage.class));
 
             //Act
-            Exception exception = assertThrows(ModelerException.class, ()-> systemUnderTest.sendEmailAccount(emailDestinatario, ruta, nombre));
+            Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.sendEmailAccount(emailDestinatario, ruta, nombre));
 
             //Assert
             assertEquals(messageError, exception.getMessage());
@@ -135,12 +137,12 @@ public class EmailServiceImplTest {
             MimeMessage mimeMessage = mock(MimeMessage.class);
             
             //SetUp
-            when(emailSender.createMimeMessage()).thenReturn(mimeMessage);
+            when(this.emailSender.createMimeMessage()).thenReturn(mimeMessage);
             //Act
-            systemUnderTest.sendEmailAccount(emailDestinatario, ruta, nombre);
+            this.systemUnderTest.sendEmailAccount(emailDestinatario, ruta, nombre);
 
             //Assert
-            verify(emailSender, times(1)).send(any(MimeMessage.class));
+            verify(this.emailSender, times(1)).send(any(MimeMessage.class));
         
     }
     

@@ -13,5 +13,5 @@ public interface RutaService {
     public String delete(String id) throws ModelerException;
     public UsuarioParticipanteResponse addUsuarioParticipante(String idRuta, String emailUsuario) throws ModelerException;
     public String removeUsuarioParticipante(String idRuta, String emailUsuario) throws ModelerException;
-    public List<UserDTO> obtenerUsuarioParticipantesDeProyecto(String idRuta) throws ModelerException;
+    public List<UserDTO> obtenerUsuariosParticipantesDeProyecto(String idRuta) throws ModelerException;
 }

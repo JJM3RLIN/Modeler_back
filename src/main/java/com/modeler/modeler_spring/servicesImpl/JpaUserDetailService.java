@@ -31,9 +31,11 @@ public class JpaUserDetailService implements UserDetailsService {
        
         Optional<User> userOptional = userRepository.findByEmail(username);
         if(!userOptional.isPresent()) {
-            throw new UsernameNotFoundException("User not found with email: " + username);
+            throw new UsernameNotFoundException("La cuenta con correo: " + username + " no existe");
         } 
-
+        if(!userOptional.get().isVerificado()) {
+            throw new UsernameNotFoundException("No se ha verificado el correo");
+        }
         User user = userOptional.orElseThrow();
         session.setAttribute("nombre", user.getNombre());
         session.setAttribute("id", user.getId());

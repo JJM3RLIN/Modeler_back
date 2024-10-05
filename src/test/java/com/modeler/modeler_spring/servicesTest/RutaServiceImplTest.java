@@ -45,10 +45,10 @@ public void When_CallCreate_And_UserIsNotRegistered_ShouldThrowAnException() thr
         RutaDTO rutaDTO = new RutaDTO("Test", id);
 
         //setUp
-        when(userRepository.findById(id)).thenReturn(Optional.empty());
+        when(this.userRepository.findById(id)).thenReturn(Optional.empty());
 
         //Act
-        Exception exception = assertThrows(ModelerException.class, ()-> systemUnderTest.create(rutaDTO));
+        Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.create(rutaDTO));
 
         //Assert
         assertEquals("No se encontro el usuario creador", exception.getMessage());
@@ -67,16 +67,16 @@ public void When_CallCreate_And_UserIsRegistered_ShouldExecute() throws ModelerE
         RutaDTO rutaDTO = new RutaDTO("Test", 1);
 
         //setUp
-        when(userRepository.findById(1)).thenReturn(Optional.of(userMock));
-        when(rutaRepository.save(any(Ruta.class))).thenReturn(rutaMock);
-        when(userRepository.save(userMock)).thenReturn(userMock);
+        when(this.userRepository.findById(1)).thenReturn(Optional.of(userMock));
+        when(this.rutaRepository.save(any(Ruta.class))).thenReturn(rutaMock);
+        when(this.userRepository.save(userMock)).thenReturn(userMock);
 
         //Act
-        systemUnderTest.create(rutaDTO);
+        this.systemUnderTest.create(rutaDTO);
 
         //Assert
-        verify(rutaRepository, times(1)).save(any(Ruta.class));
-        verify(userRepository, times(1)).save(userMock);
+        verify(this.rutaRepository, times(1)).save(any(Ruta.class));
+        verify(this.userRepository, times(1)).save(userMock);
 }
 
 @Test
@@ -86,14 +86,14 @@ public void When_CallUpdate_And_RutaDoesNotExist_ShouldThrowAnException() throws
         RutaDTO rutaDTO = new RutaDTO("Test", 1);
 
         //setUp
-        when(rutaRepository.findById(anyString())).thenReturn(Optional.empty());
+        when(this.rutaRepository.findById(anyString())).thenReturn(Optional.empty());
 
         //Act
-        Exception exception = assertThrows(ModelerException.class, ()-> systemUnderTest.update(rutaDTO));
+        Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.update(rutaDTO));
 
         //Assert
         assertEquals("No se encontro la ruta", exception.getMessage());
-        verify(rutaRepository, times(0)).save(any(Ruta.class));
+        verify(this.rutaRepository, times(0)).save(any(Ruta.class));
 }
 
 @Test
@@ -107,15 +107,15 @@ public void When_CallUpdate_And_RutaExists_ShouldExecute() throws ModelerExcepti
         rutaDTO.setId(rutaId);
     
         //setUp
-        when(rutaRepository.findById(rutaId)).thenReturn(Optional.of(rutaMock));
-        when(rutaRepository.save(any(Ruta.class))).thenReturn(any(Ruta.class));
+        when(this.rutaRepository.findById(rutaId)).thenReturn(Optional.of(rutaMock));
+        when(this.rutaRepository.save(any(Ruta.class))).thenReturn(any(Ruta.class));
 
         //Act
-        systemUnderTest.update(rutaDTO);
+        this.systemUnderTest.update(rutaDTO);
 
         //Assert
-        verify(rutaRepository, times(1)).findById(anyString());
-        verify(rutaRepository, times(1)).save(any(Ruta.class));
+        verify(this.rutaRepository, times(1)).findById(anyString());
+        verify(this.rutaRepository, times(1)).save(any(Ruta.class));
 }
 
 @Test
@@ -125,15 +125,15 @@ public void When_CallDelete_And_RutaDoesNotExist_ShouldThrowAnException() throws
         String rutaId = "1";
 
         //setUp
-        when(rutaRepository.findById(rutaId)).thenReturn(Optional.empty());
-        when(rutaRepository.save(any(Ruta.class))).thenReturn(any(Ruta.class));
+        when(this.rutaRepository.findById(rutaId)).thenReturn(Optional.empty());
+        when(this.rutaRepository.save(any(Ruta.class))).thenReturn(any(Ruta.class));
 
         //Act
-        Exception exception = assertThrows(ModelerException.class, ()-> systemUnderTest.delete(rutaId));
+        Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.delete(rutaId));
 
         //Assert
         assertEquals("La ruta no existe", exception.getMessage());
-        verify(rutaRepository, times(0)).save(any(Ruta.class));
+        verify(this.rutaRepository, times(0)).save(any(Ruta.class));
 }
 
 @Test
@@ -143,14 +143,14 @@ public void When_CallDelete_And_UserExists_ShouldExecute() throws ModelerExcepti
         Ruta rutaMock = new Ruta("1", "Test", null, null, null);
     
         //setUp
-        when(rutaRepository.findById(anyString())).thenReturn(Optional.of(rutaMock));
+        when(this.rutaRepository.findById(anyString())).thenReturn(Optional.of(rutaMock));
 
         //Act
-        systemUnderTest.delete(anyString());
+        this.systemUnderTest.delete(anyString());
 
         //Assert
-        verify(rutaRepository, times(1)).findById(anyString());
-        verify(rutaRepository, times(1)).deleteById(anyString());
+        verify(this.rutaRepository, times(1)).findById(anyString());
+        verify(this.rutaRepository, times(1)).deleteById(anyString());
 }
 
 @Test
@@ -162,11 +162,11 @@ public void When_CalladdUsuarioParticipante_And_UserDoesNotExist_ShouldThrowAnEx
     Ruta rutaMock = new Ruta(rutaId, "Test", null, userMock, null);
 
     //setUp
-    when(rutaRepository.findById(rutaId)).thenReturn(Optional.of(rutaMock));
-    when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+    when(this.rutaRepository.findById(rutaId)).thenReturn(Optional.of(rutaMock));
+    when(this.userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
     //Act
-    Exception exception = assertThrows(ModelerException.class, ()-> systemUnderTest.addUsuarioParticipante(rutaId, email));
+    Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.addUsuarioParticipante(rutaId, email));
 
     //Assert
     assertEquals("No se encontro el usuario", exception.getMessage());
@@ -181,11 +181,11 @@ public void When_CalladdUsuarioParticipante_And_RutaDoesNotExist_ShouldThrowAnEx
     User userMock = new User("Test", email, "abcd", null, null);
 
     //setUp
-    when(rutaRepository.findById(rutaId)).thenReturn(Optional.empty());
-    when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(userMock));
+    when(this.rutaRepository.findById(rutaId)).thenReturn(Optional.empty());
+    when(this.userRepository.findByEmail(anyString())).thenReturn(Optional.of(userMock));
 
     //Act
-    Exception exception = assertThrows(ModelerException.class, ()-> systemUnderTest.addUsuarioParticipante(rutaId, email));
+    Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.addUsuarioParticipante(rutaId, email));
 
     //Assert
     assertEquals("No se encontro la ruta", exception.getMessage());
@@ -207,11 +207,11 @@ public void When_CalladdUsuarioParticipante_And_UserIsInRoute_ShouldThrowAnExcep
     userMock.getRutasCreadas().add(rutaMock);
 
     //setUp
-    when(rutaRepository.findById(rutaId)).thenReturn(Optional.of(rutaMock));
-    when(userRepository.findByEmail(email)).thenReturn(Optional.of(userMock));
+    when(this.rutaRepository.findById(rutaId)).thenReturn(Optional.of(rutaMock));
+    when(this.userRepository.findByEmail(email)).thenReturn(Optional.of(userMock));
 
     //Act
-    Exception exception = assertThrows(ModelerException.class, ()-> systemUnderTest.addUsuarioParticipante(rutaId, email));
+    Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.addUsuarioParticipante(rutaId, email));
 
     //Assert
     assertEquals("El usuario ya esta en la ruta", exception.getMessage());
@@ -232,16 +232,16 @@ public void When_CalladdUsuarioParticipante_And_UserIsNotInRoute_And_RutaExists_
     userMock.getRutasCreadas().add(rutaMock);
 
     //setUp
-    when(rutaRepository.findById(rutaId)).thenReturn(Optional.of(rutaMock));
-    when(userRepository.findByEmail(email)).thenReturn(Optional.of(user2Mock));
-    when(rutaRepository.save(rutaMock)).thenReturn(any(Ruta.class));
+    when(this.rutaRepository.findById(rutaId)).thenReturn(Optional.of(rutaMock));
+    when(this.userRepository.findByEmail(email)).thenReturn(Optional.of(user2Mock));
+    when(this.rutaRepository.save(rutaMock)).thenReturn(any(Ruta.class));
 
     //Act
-     systemUnderTest.addUsuarioParticipante(rutaId, email);
+    this.systemUnderTest.addUsuarioParticipante(rutaId, email);
 
     //Assert
-    verify(rutaRepository, times(1)).save(any(Ruta.class));
-    verify(emailService, times(1)).sendEmailAddProject(email, "http://localhost:5173/login", user2Mock.getNombre());
+    verify(this.rutaRepository, times(1)).save(any(Ruta.class));
+    verify(this.emailService, times(1)).sendEmailAddProject(email, "http://localhost:5173/login", user2Mock.getNombre());
 }
 
 @Test
@@ -249,10 +249,10 @@ public void When_CallobtenerUsuarioParticipantesDeProyecto_And_RutaDoesNotExist_
 {
 
         //setUp
-        when(rutaRepository.findById(anyString())).thenReturn(Optional.empty());
+        when(this.rutaRepository.findById(anyString())).thenReturn(Optional.empty());
 
         //Act
-        Exception exception = assertThrows(ModelerException.class, ()-> systemUnderTest.obtenerUsuarioParticipantesDeProyecto(anyString()));
+        Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.obtenerUsuariosParticipantesDeProyecto(anyString()));
 
         //Assert
         assertEquals("No se encontro la ruta", exception.getMessage());
@@ -272,14 +272,14 @@ public void When_CallobtenerUsuarioParticipantesDeProyecto_And_RutaExists_Should
     userMock.getRutasCreadas().add(rutaMock);
 
     //setUp
-    when(rutaRepository.findById(rutaId)).thenReturn(Optional.of(rutaMock));
-    when(rutaRepository.findUsuariosEnProyecto(rutaId)).thenReturn(usuariosParticipantes);
+    when(this.rutaRepository.findById(rutaId)).thenReturn(Optional.of(rutaMock));
+    when(this.rutaRepository.findUsuariosEnProyecto(rutaId)).thenReturn(usuariosParticipantes);
 
     //Act
-    List<UserDTO> usuarios = systemUnderTest.obtenerUsuarioParticipantesDeProyecto(rutaId);
+    List<UserDTO> usuarios = this.systemUnderTest.obtenerUsuariosParticipantesDeProyecto(rutaId);
 
     //Assert
-    verify(rutaRepository, times(1)).findUsuariosEnProyecto(rutaId);
+    verify(this.rutaRepository, times(1)).findUsuariosEnProyecto(rutaId);
     assertEquals(usuariosParticipantes, usuarios);
 }
 
@@ -295,11 +295,11 @@ public void When_CallremoveUsuarioParticipante_And_UserDoesNotExit_ShouldThrowAn
     Ruta rutaMock = new Ruta(rutaId, "Test", null, userMock, usuariosParticipantes);
 
     //setUp
-    when(rutaRepository.findById(rutaId)).thenReturn(Optional.of(rutaMock));
-    when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+    when(this.rutaRepository.findById(rutaId)).thenReturn(Optional.of(rutaMock));
+    when(this.userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
     //Act
-    Exception exception = assertThrows(ModelerException.class, ()-> systemUnderTest.removeUsuarioParticipante(rutaId, email));
+    Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.removeUsuarioParticipante(rutaId, email));
 
     //Assert
     assertEquals("No se encontro el usuario", exception.getMessage());
@@ -320,11 +320,11 @@ public void When_CallremoveUsuarioParticipante_And_UserIsNotInRoute_ShouldThrowA
     userMock.getRutasCreadas().add(rutaMock);
 
     //setUp
-    when(rutaRepository.findById(rutaId)).thenReturn(Optional.of(rutaMock));
-    when(userRepository.findByEmail(email)).thenReturn(Optional.of(user2Mock));
+    when(this.rutaRepository.findById(rutaId)).thenReturn(Optional.of(rutaMock));
+    when(this.userRepository.findByEmail(email)).thenReturn(Optional.of(user2Mock));
 
     //Act
-    Exception exception = assertThrows(ModelerException.class, ()-> systemUnderTest.removeUsuarioParticipante(rutaId, email));
+    Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.removeUsuarioParticipante(rutaId, email));
 
     //Assert
     assertEquals("El usuario no esta en la ruta", exception.getMessage());
@@ -346,15 +346,15 @@ public void When_CallremoveUsuarioParticipante_And_UserIsInRoute_ShouldThrowAnEx
     userMock.getRutasCreadas().add(rutaMock);
 
     //setUp
-    when(rutaRepository.findById(rutaId)).thenReturn(Optional.of(rutaMock));
-    when(userRepository.findByEmail(email)).thenReturn(Optional.of(user2Mock));
-    when(rutaRepository.save(rutaMock)).thenReturn(rutaMock);
+    when(this.rutaRepository.findById(rutaId)).thenReturn(Optional.of(rutaMock));
+    when(this.userRepository.findByEmail(email)).thenReturn(Optional.of(user2Mock));
+    when(this.rutaRepository.save(rutaMock)).thenReturn(rutaMock);
 
     //Act
-    systemUnderTest.removeUsuarioParticipante(rutaId, email);
+    this.systemUnderTest.removeUsuarioParticipante(rutaId, email);
 
     //Assert
-    verify(rutaRepository, times(1)).save(any(Ruta.class));
+    verify(this.rutaRepository, times(1)).save(any(Ruta.class));
     assertEquals(0, rutaMock.getUsuariosParticipantes().size());
 }
 

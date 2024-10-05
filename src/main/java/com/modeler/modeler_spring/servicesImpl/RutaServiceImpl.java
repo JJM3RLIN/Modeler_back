@@ -108,6 +108,7 @@ public class RutaServiceImpl implements RutaService {
         }
     }
 
+    @Override
     public UsuarioParticipanteResponse addUsuarioParticipante(String idRuta, String emailUsuario) throws ModelerException{
         try{
    
@@ -139,7 +140,9 @@ public class RutaServiceImpl implements RutaService {
             throw new ModelerException(e.getMessage());
         }
     }
-    public List<UserDTO> obtenerUsuarioParticipantesDeProyecto(String idRuta) throws ModelerException{
+
+    @Override
+    public List<UserDTO> obtenerUsuariosParticipantesDeProyecto(String idRuta) throws ModelerException{
         try{
             rutaRepository.findById(idRuta).orElseThrow(() -> new ModelerException("No se encontro la ruta"));
             List<UserDTO> usuariosParticipantes = rutaRepository.findUsuariosEnProyecto(idRuta);
@@ -150,6 +153,7 @@ public class RutaServiceImpl implements RutaService {
         }
     }
     
+    @Override
     public String removeUsuarioParticipante(String idRuta, String emailUsuario) throws ModelerException{
         
         try{

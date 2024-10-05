@@ -37,7 +37,7 @@ public class RutasController {
     }
     @PostMapping("/usuarios-participan")
     public ResponseEntity<?> usuariosParticipanEnProyecto(@RequestBody IdDTO idDTO) throws ModelerException {
-        return ResponseEntity.ok().body(rutaService.obtenerUsuarioParticipantesDeProyecto(idDTO.getId()));
+        return ResponseEntity.ok().body(rutaService.obtenerUsuariosParticipantesDeProyecto(idDTO.getId()));
     }
     
     @PostMapping("user/agregar-colaborador")
@@ -46,7 +46,8 @@ public class RutasController {
     }
     @PostMapping("user/eliminar")
     public ResponseEntity<?> removeUser (@RequestBody AddUserDTO addUserDTO) throws ModelerException {
-        return ResponseEntity.ok().body(rutaService.removeUsuarioParticipante(addUserDTO.getIdRuta(), addUserDTO.getEmailUsuario()));
+        rutaService.removeUsuarioParticipante(addUserDTO.getIdRuta(), addUserDTO.getEmailUsuario());
+        return ResponseEntity.ok().build();
     }
     
 }

@@ -53,11 +53,11 @@ public void When_CallCreate_And_UserIsRegisteredWithTheSameEmail_ShouldThrowAnEx
     
         //setUp
         UserDTO userDTO = new UserDTO(name, email, password);
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(userMock));
-        when(userRepository.save(any(User.class))).thenReturn(userMock);
+        when(this.userRepository.findByEmail(email)).thenReturn(Optional.of(userMock));
+        when(this.userRepository.save(any(User.class))).thenReturn(userMock);
 
         //Act
-        Exception exception = assertThrows(ModelerException.class, ()-> systemUnderTest.create(userDTO));
+        Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.create(userDTO));
 
         //Assert
         assertEquals("El email ya esta en uso", exception.getMessage());
@@ -76,12 +76,12 @@ public void When_CallCreate_And_CouldNotSendEmail_ShouldThrowAnException() throw
     
         //setUp
         UserDTO userDTO = new UserDTO(name, email, password);
-        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
-        when(userRepository.save(any(User.class))).thenReturn(userMock);
-        doThrow(new ModelerException("Ocurrio un error el enviar el email")).when(emailService).sendEmailAccount(anyString(), anyString(), anyString());
+        when(this.userRepository.findByEmail(email)).thenReturn(Optional.empty());
+        when(this.userRepository.save(any(User.class))).thenReturn(userMock);
+        doThrow(new ModelerException("Ocurrio un error el enviar el email")).when(this.emailService).sendEmailAccount(anyString(), anyString(), anyString());
 
         //Act
-        Exception exception = assertThrows(ModelerException.class, ()-> systemUnderTest.create(userDTO));
+        Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.create(userDTO));
 
         //Assert
         assertEquals("Ocurrio un error el enviar el email", exception.getMessage());
@@ -101,15 +101,15 @@ public void When_CallCreate_And_IsNotRegistered_ShouldExecute() throws ModelerEx
     
         //setUp
         UserDTO userDTO = new UserDTO(name, email, password);
-        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
-        when(userRepository.save(any(User.class))).thenReturn(userMock);
+        when(this.userRepository.findByEmail(email)).thenReturn(Optional.empty());
+        when(this.userRepository.save(any(User.class))).thenReturn(userMock);
 
         //Act
-        systemUnderTest.create(userDTO);
+        this.systemUnderTest.create(userDTO);
 
         //Assert
-        verify(userRepository, times(1)).findByEmail(email);
-        verify(userRepository, times(1)).save(any(User.class));
+        verify(this.userRepository, times(1)).findByEmail(email);
+        verify(this.userRepository, times(1)).save(any(User.class));
 }
 
 @Test
@@ -125,15 +125,15 @@ public void When_CallUpdate_And_UserDoesNotExist_ShouldThrowAnException() throws
         userDTO.setId(1);
     
         //setUp
-        when(userRepository.findById(userDTO.getId())).thenReturn(Optional.empty());
-        when(userRepository.save(any(User.class))).thenReturn(userMock);
+        when(this.userRepository.findById(userDTO.getId())).thenReturn(Optional.empty());
+        when(this.userRepository.save(any(User.class))).thenReturn(userMock);
 
         //Act
-        Exception exception = assertThrows(ModelerException.class, ()-> systemUnderTest.update(userDTO));
+        Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.update(userDTO));
 
         //Assert
         assertEquals("El usuario no existe", exception.getMessage());
-        verify(userRepository, times(0)).save(userMock);
+        verify(this.userRepository, times(0)).save(userMock);
 }
 
 @Test
@@ -150,15 +150,15 @@ public void When_CallUpdate_And_UserExists_ShouldExecute() throws ModelerExcepti
         userDTO.setId(1);
     
         //setUp
-        when(userRepository.findById(userDTO.getId())).thenReturn(Optional.of(userMock));
-        when(userRepository.save(any(User.class))).thenReturn(userMock);
+        when(this.userRepository.findById(userDTO.getId())).thenReturn(Optional.of(userMock));
+        when(this.userRepository.save(any(User.class))).thenReturn(userMock);
 
         //Act
-        systemUnderTest.create(userDTO);
+        this.systemUnderTest.create(userDTO);
 
         //Assert
-        verify(userRepository, times(1)).findByEmail(email);
-        verify(userRepository, times(1)).save(any(User.class));
+        verify(this.userRepository, times(1)).findByEmail(email);
+        verify(this.userRepository, times(1)).save(any(User.class));
 }
 
 @Test
@@ -172,14 +172,14 @@ public void When_CallDelete_And_UserDoesNotExist_ShouldThrowAnException() throws
         userDTO.setId(1);
     
         //setUp
-        when(userRepository.findById(userDTO.getId())).thenReturn(Optional.empty());
+        when(this.userRepository.findById(userDTO.getId())).thenReturn(Optional.empty());
 
         //Act
-        Exception exception = assertThrows(ModelerException.class, ()-> systemUnderTest.delete(userDTO.getId()));
+        Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.delete(userDTO.getId()));
 
         //Assert
         assertEquals("El usuario no existe", exception.getMessage());
-        verify(userRepository, times(0)).deleteById(userDTO.getId());
+        verify(this.userRepository, times(0)).deleteById(userDTO.getId());
 }
 
 @Test
@@ -196,14 +196,14 @@ public void When_CallDelete_And_UserExists_ShouldExecute() throws ModelerExcepti
         userDTO.setId(1);
     
         //setUp
-        when(userRepository.findById(userDTO.getId())).thenReturn(Optional.of(userMock));
+        when(this.userRepository.findById(userDTO.getId())).thenReturn(Optional.of(userMock));
 
         //Act
-        systemUnderTest.delete(userDTO.getId());
+       this.systemUnderTest.delete(userDTO.getId());
 
         //Assert
-        verify(userRepository, times(1)).findById(userDTO.getId());
-        verify(userRepository, times(1)).deleteById(userDTO.getId());
+        verify(this.userRepository, times(1)).findById(userDTO.getId());
+        verify(this.userRepository, times(1)).deleteById(userDTO.getId());
 }
 
 @Test
@@ -218,10 +218,10 @@ public void When_CallVerifyToken_And_TokenDoesNotExist_ShouldThrowAnException() 
         User userMock = new User(name, email, passwordEncoded, null, token);
     
         //setUp
-        when(userRepository.findByToken(token)).thenReturn(Optional.empty());
+        when(this.userRepository.findByToken(token)).thenReturn(Optional.empty());
 
         //Act
-        Exception exception = assertThrows(ModelerException.class, ()-> systemUnderTest.verifyToken(token));
+        Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.verifyToken(token));
 
         //Assert
         assertEquals("El token no es valido", exception.getMessage());
@@ -240,15 +240,15 @@ public void When_CallVerifyToken_And_TokenExists_ShouldExecute() throws ModelerE
         User userMock = new User(name, email, passwordEncoded, null, token);
     
         //setUp
-        when(userRepository.findByToken(token)).thenReturn(Optional.of(userMock));
+        when(this.userRepository.findByToken(token)).thenReturn(Optional.of(userMock));
 
         //Act
-        systemUnderTest.verifyToken(token);
+        this.systemUnderTest.verifyToken(token);
 
         //Assert
         assertNull(userMock.getToken());
-        verify(userRepository, times(1)).findByToken(token);
-        verify(userRepository, times(1)).save(userMock);
+        verify(this.userRepository, times(1)).findByToken(token);
+        verify(this.userRepository, times(1)).save(userMock);
 }
 
 @Test
@@ -258,14 +258,14 @@ public void When_CallRutasParticipante_And_UserDoesNotExist_ShouldThrowAnExcepti
         int id = 1;
     
         //setUp
-        when(userRepository.findById(id)).thenReturn(Optional.empty());
+        when(this.userRepository.findById(id)).thenReturn(Optional.empty());
 
         //Act
-        Exception exception = assertThrows(ModelerException.class, ()-> systemUnderTest.rutasParticipante(id));
+        Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.rutasParticipante(id));
 
         //Assert
         assertEquals("El usuario no existe", exception.getMessage());
-        verify(rutaRepository, times(0)).findByUsuariosParticipante(id);
+        verify(this.rutaRepository, times(0)).findByUsuariosParticipante(id);
 }
 
 @Test
@@ -281,15 +281,75 @@ public void When_CallRutasParticipante_And_RouteExists_ShouldExecute() throws Mo
         int id = 1;
     
         //setUp
-        when(userRepository.findById(id)).thenReturn(Optional.of(userMock));
+        when(this.userRepository.findById(id)).thenReturn(Optional.of(userMock));
 
         //Act
-        List<RutasUsuarioDTO> rutas = systemUnderTest.rutasParticipante(id);
+        List<RutasUsuarioDTO> rutas = this.systemUnderTest.rutasParticipante(id);
 
         //Assert
         assertNotNull(rutas);
-        verify(userRepository, times(1)).findById(id);
-        verify(rutaRepository, times(1)).findByUsuariosParticipante(id);
+        verify(this.userRepository, times(1)).findById(id);
+        verify(this.rutaRepository, times(1)).findByUsuariosParticipante(id);
+}
+
+@Test
+public void When_CallSendEmailRecovery_And_UserDosentExist_ShouldThrowAnException() throws ModelerException 
+{
+        //Arrange
+        String email = "correo@test.com";
+        //setUp
+        when(this.userRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        //Act
+        Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.sendEmailRecovery(email));
+
+        //Assert
+        assertEquals("Ocurrio un error el enviar el email", exception.getMessage());
+    
+}
+
+@Test
+public void When_CallRecoverPassword_And_UserDoesNotExist_ShouldThrowAnException() throws ModelerException 
+{
+        //Arrange
+        String name = "Test";
+        String email = "correo@test.com";
+        String password = "password";
+        String token = UUID.randomUUID().toString();
+        String passwordEncoded = passwordEncoder.encode(password);
+        UserDTO userDTO = new UserDTO(name, email, password);
+        User userMock = new User(name, email, passwordEncoded, null, token);
+        //setUp
+        when(this.userRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        //Act
+        Exception exception = assertThrows(ModelerException.class, ()-> this.systemUnderTest.recoverPassword(userDTO));
+
+        //Assert
+       assertNotNull(exception);
+       verify(this.userRepository, times(0)).save(userMock);
+}
+
+@Test
+public void When_CallRecoverPassword_And_UserDoesExist_ShouldReturnAString() throws ModelerException 
+{
+        //Arrange
+        String name = "Test";
+        String email = "correo@test.com";
+        String password = "password";
+        String token = UUID.randomUUID().toString();
+        String passwordEncoded = passwordEncoder.encode(password);
+        UserDTO userDTO = new UserDTO(123, name, email, password);
+        User userMock = new User(name, email, passwordEncoded, null, token);
+        //setUp
+        when(this.userRepository.findById(userDTO.getId())).thenReturn(Optional.of(userMock));
+
+        //Act
+        String response = this.systemUnderTest.recoverPassword(userDTO);
+
+        //Assert
+       assertNotNull(response);
+       verify(this.userRepository, times(1)).save(userMock);
 }
 
 }

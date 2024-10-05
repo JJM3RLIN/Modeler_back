@@ -32,8 +32,13 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public Optional<User> findByEmail(String email)  throws ModelerException{
+
+        Optional<User> user = userRepository.findByEmail(email);
+        if(!user.isPresent()) {
+            throw new ModelerException("El email no esta registrado");
+        }
+        return user;
     }
 
     @Override

@@ -33,6 +33,13 @@ public class Ruta {
 
     public Ruta() {
     }
+
+    public Ruta(String id, String nombre, User usuarioCreador, List<User> usuariosParticipantes) {
+        this.id = id;
+        this.nombre = nombre;
+        this.usuarioCreador = usuarioCreador;
+        this.usuariosParticipantes = usuariosParticipantes;
+    }
     public Ruta(String nombre, User usuarioCreador, List<User> usuariosParticipantes) {
         this.nombre = nombre;
         this.usuarioCreador = usuarioCreador;
