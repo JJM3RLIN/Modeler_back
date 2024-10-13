@@ -9,6 +9,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,9 @@ import com.modeler.modeler_spring.responses.RutaResponse;
 
 @Service
 public class RutaServiceImpl implements RutaService {
+
+    private static final Logger logger = LoggerFactory.getLogger(RutaServiceImpl.class);
+
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -63,6 +68,7 @@ public class RutaServiceImpl implements RutaService {
                 response.put("id", idRuta);
                 response.put("nombre", rutaDTO.getNombre());
                 response.put("usuarioCreador", usuarioCreador.get().getNombre());
+                logger.info("Se creo un nuevo proyecto");
                 return new RutaResponse(
                     idRuta, 
                     rutaDTO.getNombre(), 
@@ -70,6 +76,7 @@ public class RutaServiceImpl implements RutaService {
             
         }
         catch(Exception e){
+            logger.error(e.getMessage());
             throw new ModelerException(e.getMessage());
         }
         

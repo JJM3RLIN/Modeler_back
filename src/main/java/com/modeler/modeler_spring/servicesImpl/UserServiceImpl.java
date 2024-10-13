@@ -7,6 +7,8 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import com.modeler.modeler_spring.DTO.RutasUsuarioDTO;
@@ -23,6 +25,9 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class UserServiceImpl implements UserService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -70,7 +75,7 @@ public class UserServiceImpl implements UserService {
             // Enviar email de verificación
             emailService.sendEmailAccount(userDTO.getEmail(), "http://localhost:5173/verified/" + token,
                     userDTO.getNombre());
-
+            logger.info("Nuevo usuario creado");
             return "Usuario creado, te hemos enviado un email para que verifiques tu cuenta";
 
         } catch (Exception e) {
@@ -171,6 +176,7 @@ public class UserServiceImpl implements UserService {
             emailService.sendEmailRecovery(emailDestinatario, "http://localhost:5173/reset", userOptional.get().getNombre(), Integer.toString(userOptional.get().getId()));
 
         } catch (Exception e) {
+            logger.error(e.getMessage());
             throw new ModelerException(Errors.EMAIL_NOT_SENT);
         }
     }
