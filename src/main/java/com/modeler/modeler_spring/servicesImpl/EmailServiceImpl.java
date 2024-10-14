@@ -1,6 +1,8 @@
 package com.modeler.modeler_spring.servicesImpl;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 
@@ -18,6 +20,8 @@ import jakarta.mail.internet.MimeMessage;
 @Service
 public class EmailServiceImpl implements EmailService{
 
+    private static final Logger logger = LoggerFactory.getLogger(EmailServiceImpl.class);
+
     @Autowired
     private JavaMailSender emailSender;
 
@@ -34,6 +38,7 @@ public class EmailServiceImpl implements EmailService{
             emailSender.send(message);
 
         } catch (Exception e) {
+            logger.error(e.getMessage());
             throw new ModelerException(Errors.EMAIL_NOT_SENT);
         }
     }
@@ -51,6 +56,7 @@ public class EmailServiceImpl implements EmailService{
             emailSender.send(message);
 
         } catch (Exception e) {
+            logger.error(e.getMessage());
             throw new ModelerException(Errors.EMAIL_NOT_SENT);
         }
     }
@@ -68,6 +74,7 @@ public class EmailServiceImpl implements EmailService{
             emailSender.send(message);                  
             
         } catch (Exception e) {
+            logger.error(e.getMessage());
             throw new ModelerException(Errors.EMAIL_NOT_SENT);                 
         }
     }
@@ -80,6 +87,7 @@ public class EmailServiceImpl implements EmailService{
             helper.setText(text, true);
             return message;
         } catch (MessagingException e) {
+            logger.error(e.getMessage());
             throw new ModelerException(Errors.EMAIL_NOT_SENT);
         }    
     }
