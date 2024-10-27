@@ -10,9 +10,10 @@
 	</parent>
 	<groupId>com.modeler</groupId>
 	<artifactId>modeler_spring</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>modeler_spring</name>
 	<description>Modeler is a project where you can create entity diagrams</description>
+	<packaging>jar</packaging>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
